@@ -1,0 +1,52 @@
+---
+title: "Space is the place!"
+author: "Megan Risdal"
+date: "11 September 2016"
+output:
+  html_document:
+    fig_width: 8
+    fig_height: 5
+    theme: cosmo
+    highlight: kate
+---
+Note: This script is from Megan Risdal's analysis of the Open Exoplanet Catalogue. It's more of an adjustment to the graphs.
+
+```{r, echo = F, message = F, warning = F}
+library(ggplot2)
+library(dplyr)
+library(ggthemes) # For solarized theme (IMPORTANT)
+
+oec <- read.csv("~/GitHub/open_exoplanet_catalogue/oec.csv", h=T, stringsAsFactors=F)
+
+```
+There's a lot of interesting data to *explore* here, but I wanted to take a quick peek at trends in extrasolar discoveries since the first in 1992.
+
+# Dates of Discovery
+
+```{r, message = F, warning = F}
+ggplot(oec %>% filter(DiscoveryYear > 1991), 
+		aes(x = DiscoveryYear)) + 
+	geom_bar(stat="count", fill = "cadetblue") +
+	scale_x_continuous(breaks = seq(1991, 2016, 1)) + 
+	labs(x = "Year", y = "Planets Discovered", title = "Yearly Discovered Planets") +
+	theme_bw() +
+	theme(axis.text.x = element_text(angle = 70, hjust = 1))
+
+```
+
+Excluding our neighbors like Neptune and, err, ourselves, when were the planets in the database discovered? It's interesting to see there were few exoplanets discovered in 2015. I would be curious to learn the reason why if anyone knows. 
+
+# Planet Size by Date of Discovery
+
+```{r, message = F, warning = F}
+ggplot(oec %>% filter(DiscoveryYear > 1991, RadiusJpt < 5), 
+		aes(x = DiscoveryYear, y = RadiusJpt, color = RadiusJpt)) + 
+	geom_point(position="jitter")  + 
+	geom_smooth(color = "indianred") +
+	scale_x_continuous(breaks = seq(1991, 2016, 1)) + 
+	labs(x = "Discovery Year", y = "Planet Size (Jupiter Radii)", title = "Planet Size Compared to Jupiter's Radius") +
+	theme_bw() +
+	theme(axis.text.x = element_text(angle = 70, hjust = 1))
+```
+
+There's one huge outlier planet that I've removed with `RadiusJpt < 5`. You can see we've been finding many more smaller planets since about 2009 or 2010, but we still find big ones, too. The sudden surge in new extrasolar planet discoveries is thanks to the Kepler spacecraft which was launched March 7, 2009. [According to Wikipedia](https://en.wikipedia.org/wiki/List_of_exoplanets_discovered_using_the_Kepler_spacecraft), Kepler and its follow-ups have detected 2,300 confirmed planets as of 2015. Way to go, Kepler!
